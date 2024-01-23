@@ -64,8 +64,4 @@ class Store:
         Product (from Product class) and quantity (int).
         Buys the products and returns the total price of the order.
         """
-        order_cost = []
-        for item in shopping_list:
-            item_cost = item[0].buy(item[1])
-            order_cost.append(item_cost)
-        return sum(order_cost)
+        return sum(item[0].buy(item[1]) or 0 for item in shopping_list)

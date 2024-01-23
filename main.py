@@ -1,5 +1,6 @@
-import products
-import store
+from products import LimitedProduct, NonStockedProduct, Product
+from promotions import PercentDiscount, SecondHalfPrice, ThirdOneFree
+from store import Store
 
 def list_products(stock):
     """
@@ -29,7 +30,7 @@ def order_products(stock):
 
     order_list = []
 
-    print("When you want to finish order, enter empty text.")
+    print("When you want to finish the order, enter empty text.")
     while True:
         try:
             product_num = int(input("Which product # do you want? "))
@@ -41,8 +42,6 @@ def order_products(stock):
             return
         if product_num not in list(zip(*stock_list))[0]:
             print("Error adding product!")
-        elif product_amt > 2:
-            print("Limited quantity of 2 per customer!")
         else:
             order_item = stock.order([(product_list[product_num-1], product_amt)])
             order_list.append(order_item)
@@ -81,11 +80,29 @@ def start(stock):
 """
 Setup default inventory, initiate the store and the menu
 """
-product_list = [
-    products.Product("MacBook Air M2", price=1450, quantity=100),
-    products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-    products.Product("Google Pixel 7", price=500, quantity=250)
-    ]
-best_buy = store.Store(product_list)
+product_list = [ Product("MacBook Air M2", price=1450, quantity=100),
+                 Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+                 Product("Google Pixel 7", price=500, quantity=250),
+                 NonStockedProduct("Windows License", price=125),
+                 LimitedProduct("Shipping", price=10, quantity=250, maximum=1)
+               ]
 
+"""
+Create promotion catalog
+"""
+second_half_price = SecondHalfPrice("Second Half Price!")
+third_one_free = ThirdOneFree("Third One Free!")
+thirty_percent = PercentDiscount("30% off!", percent=30)
+
+"""
+Apply promotions to products
+"""
+product_list[0].set_promotion(second_half_price)
+product_list[1].set_promotion(third_one_free)
+product_list[3].set_promotion(thirty_percent)
+
+"""
+Start store
+"""
+best_buy = Store(product_list)
 start(best_buy)
